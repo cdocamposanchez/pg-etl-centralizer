@@ -8,9 +8,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
       openjdk-17-jre-headless \
       curl \
       procps \
+    && JAVA_BIN="$(readlink -f "$(command -v java)")" \
+    && JAVA_HOME_DIR="$(dirname "$(dirname "$JAVA_BIN")")" \
+    && ln -sfn "$JAVA_HOME_DIR" /usr/lib/jvm/default-java \
     && rm -rf /var/lib/apt/lists/*
 
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
+ENV JAVA_HOME=/usr/lib/jvm/default-java
+ENV PATH="${JAVA_HOME}/bin:${PATH}"
 
 # --- Driver JDBC Postgres para Spark ---
 ENV POSTGRES_JDBC_VERSION=42.7.3
